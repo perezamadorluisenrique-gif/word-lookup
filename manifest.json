@@ -1,0 +1,10 @@
+{
+  "id": "word-lookup",
+  "name": "Word Lookup",
+  "version": "0.1.0",
+  "minAppVersion": "1.7.2",
+  "description": "Look up any word in a sidebar dictionary with definitions, phonetics, synonyms and antonyms, or create a note for it.",
+  "author": "Siulved54",
+  "authorUrl": "https://github.com/perezamadorluisenrique-gif",
+  "isDesktopOnly": false
+}

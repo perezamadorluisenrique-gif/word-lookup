@@ -1,0 +1,29 @@
+{
+  "en": [
+    {
+      "partOfSpeech": "Verb",
+      "language": "English",
+      "definitions": [
+        {
+          "definition": "To be <a rel=\"mw:WikiLink\" href=\"/wiki/engage\" title=\"engage\">engaged</a> in informal <a rel=\"mw:WikiLink\" href=\"/wiki/conversation\" title=\"conversation\">conversation</a>.",
+          "parsedExamples": [{ "example": "She <b>chatted</b> with her friend in the cafe." }, { "example": "I like to <b>chat</b> over a coffee with a friend." }],
+          "examples": ["She <b>chatted</b> with her friend in the cafe.", "I like to <b>chat</b> over a coffee with a friend."]
+        },
+        { "definition": "" },
+        { "definition": "To talk &amp; type <i>live</i> online.", "examples": ["Let&#39;s <b>chat</b> tonight."] }
+      ]
+    },
+    {
+      "partOfSpeech": "Noun",
+      "language": "English",
+      "definitions": [{ "definition": "Informal <a rel=\"mw:WikiLink\" href=\"/wiki/talk\" title=\"talk\">talk</a>.", "parsedExamples": [{ "example": "We had a nice <b>chat</b>." }] }]
+    }
+  ],
+  "fr": [
+    {
+      "partOfSpeech": "Noun",
+      "language": "French",
+      "definitions": [{ "definition": "<a rel=\"mw:WikiLink\" href=\"/wiki/cat\" title=\"cat\">cat</a>", "parsedExamples": [{ "example": "Le <b>chat</b> dort.", "translation": "The cat sleeps." }] }]
+    }
+  ]
+}
