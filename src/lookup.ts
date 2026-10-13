@@ -42,14 +42,44 @@ export const WIKI_HEADERS = {
 /** Fewer own synonyms than this and Datamuse fills the list. */
 const ENOUGH_RELATED = 5;
 
+/** Timing of the Free Dictionary API, whose server can stall for 20 seconds before it gives up. */
+export interface Timing {
+  /** How long to wait for it before asking Wiktionary instead. */
+  timeoutMs: number;
+  /** After it times out or fails with a server error, how long to go straight to Wiktionary. */
+  pauseMs: number;
+  now: () => number;
+  /** Resolves after `ms`. The view passes the window's timer; without one, nothing times out. */
+  sleep?: (ms: number) => Promise<void>;
+}
+
+const TIMING: Timing = { timeoutMs: 6000, pauseMs: 5 * 60_000, now: () => Date.now() };
+
+class Timeout extends Error {}
+
+/** `promise`, or a `Timeout` rejection once `ms` have passed. */
+function within<T>(promise: Promise<T>, ms: number, sleep: Timing['sleep']): Promise<T> {
+  if (!sleep) return promise;
+  const late = sleep(ms).then((): never => {
+    throw new Timeout();
+  });
+  return Promise.race([promise, late]);
+}
+
 /** Finds words, remembering the answers for the session. */
 export class Dictionary {
   private cache = new Map<string, Entry>();
 
   private readonly limit: number;
 
-  constructor(limit = 200) {
+  private readonly timing: Timing;
+
+  /** Until when the Free Dictionary API is skipped. */
+  private firstDownUntil = 0;
+
+  constructor(limit = 200, timing: Partial<Timing> = {}) {
     this.limit = limit;
+    this.timing = { ...TIMING, ...timing };
   }
 
   clear(): void {
@@ -81,13 +111,19 @@ export class Dictionary {
     let failure: LookupError | null = null;
     let elsewhere: string[] = [];
 
-    if (options.language === 'en') {
+    if (options.language === 'en' && this.timing.now() >= this.firstDownUntil) {
       for (const candidate of candidates) {
         let res: HttpResponse;
         try {
-          res = await http(dictionaryApiUrl(candidate));
-        } catch {
-          failure = new LookupError('network', 'Could not reach the dictionary. Check your connection.');
+          res = await within(http(dictionaryApiUrl(candidate)), this.timing.timeoutMs, this.timing.sleep);
+        } catch (error) {
+          // A stalled server, unlike a missing connection, is likely to stay that way for a while.
+          if (error instanceof Timeout) {
+            failure = new LookupError('network', 'The dictionary service did not answer in time.');
+            this.pauseFirst();
+          } else {
+            failure = new LookupError('network', 'Could not reach the dictionary. Check your connection.');
+          }
           break;
         }
         if (res.status === 200) {
@@ -95,6 +131,7 @@ export class Dictionary {
           if (entry) break;
         } else if (res.status !== 404) {
           failure = new LookupError('network', `The dictionary service answered with an error (${res.status}).`);
+          if (res.status >= 500) this.pauseFirst();
           break;
         }
       }
@@ -146,6 +183,10 @@ export class Dictionary {
       }
     }
     return entry;
+  }
+
+  private pauseFirst(): void {
+    this.firstDownUntil = this.timing.now() + this.timing.pauseMs;
   }
 
   /** Fills thin synonym and antonym lists from Datamuse. A failure there only leaves the lists as they are. */

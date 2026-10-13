@@ -17,6 +17,17 @@ export function wiktionaryPage(word: string): string {
 
 const isObject = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v);
 
+/**
+ * Languages whose entries Wiktionary files under other names. The definition API has no key for these:
+ * their rows sit in its "other" list.
+ */
+const ALSO_NAMED: Record<string, string[]> = {
+  no: ['Norwegian Bokmål', 'Norwegian Nynorsk'],
+};
+
+/** Signs, codes and symbols shared by every language; the API files them under "en". */
+const TRANSLINGUAL = 'Translingual';
+
 export interface WiktionaryResult {
   entry: Entry | null;
   /** Names of the languages the page does have an entry for, when `entry` is null. */
@@ -37,26 +48,41 @@ function exampleOf(def: Record<string, unknown>): string {
 }
 
 /**
- * Reads the REST definition of a page, which holds one list of entries per language code, and keeps
- * the entry of `language`. Definitions arrive as HTML and are reduced to text; empty ones are dropped.
+ * A definition's own text. Sub-senses come nested in it as a list and again as definitions of their own,
+ * so the list is cut off here.
+ */
+function definitionText(html: string): string {
+  const nested = html.search(/<[ou]l[\s>]/i);
+  return stripHtml(nested >= 0 ? html.slice(0, nested) : html);
+}
+
+/**
+ * Reads the REST definition of a page, which holds lists of entries by language code, and keeps the
+ * entries of `language`. Definitions arrive as HTML and are reduced to text; empty ones are dropped.
  */
 export function parseWiktionary(json: unknown, word: string, language: string): WiktionaryResult {
   if (!isObject(json)) return { entry: null, elsewhere: [] };
+  const wanted = new Set([languageName(language), ...(ALSO_NAMED[language] ?? [])]);
   const names: string[] = [];
-  for (const rows of Object.values(json)) {
-    const name = Array.isArray(rows) && isObject(rows[0]) && typeof rows[0].language === 'string' ? rows[0].language : '';
-    if (name && !names.includes(name)) names.push(name);
+  const rows: Record<string, unknown>[] = [];
+  for (const [code, list] of Object.entries(json)) {
+    if (!Array.isArray(list)) continue;
+    for (const row of list) {
+      if (!isObject(row)) continue;
+      const name = typeof row.language === 'string' ? row.language : '';
+      if (name === TRANSLINGUAL) continue;
+      if (name && !names.includes(name)) names.push(name);
+      if (code === language || wanted.has(name)) rows.push(row);
+    }
   }
-  const rows = json[language];
-  if (!Array.isArray(rows)) return { entry: null, elsewhere: names };
 
   const entry = emptyEntry(word, language, languageName(language), 'wiktionary', wiktionaryPage(word));
   for (const row of rows) {
-    if (!isObject(row) || !Array.isArray(row.definitions)) continue;
+    if (!Array.isArray(row.definitions)) continue;
     const definitions: Definition[] = [];
     for (const d of row.definitions) {
       if (!isObject(d) || typeof d.definition !== 'string') continue;
-      const text = stripHtml(d.definition);
+      const text = definitionText(d.definition);
       if (text) definitions.push({ text, example: exampleOf(d) });
     }
     if (definitions.length === 0) continue;

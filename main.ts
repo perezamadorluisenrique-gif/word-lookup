@@ -66,7 +66,7 @@ interface Target {
 
 export default class WordLookupPlugin extends Plugin {
   settings: WordLookupSettings = { ...DEFAULT_SETTINGS };
-  dictionary = new Dictionary();
+  dictionary = new Dictionary(200, { sleep: (ms) => new Promise((resolve) => window.setTimeout(resolve, ms)) });
 
   /**
    * Every request to the dictionary services goes through here. A property, so the end-to-end tests can

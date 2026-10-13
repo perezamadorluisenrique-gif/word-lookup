@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 import { Dictionary, LookupError } from '../src/lookup.ts';
+import type { HttpGet } from '../src/lookup.ts';
 import { fakeHttp, fixture, FREEDICT, MUSE, ok, WIKI } from './helpers.ts';
 
 const EN = { language: 'en', related: true };
@@ -113,4 +114,40 @@ test('the cache drops the least recently used word beyond its limit', async () =
   await dictionary.lookup('three', opts, http);
   assert.ok(dictionary.cached('one', 'en'));
   assert.equal(dictionary.cached('two', 'en'), undefined);
+});
+
+test('English: a stalled or failing first service is skipped for a while', async () => {
+  let clock = 0;
+  const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
+  const dictionary = new Dictionary(200, { timeoutMs: 20, pauseMs: 1000, now: () => clock, sleep });
+  const stalled: HttpGet = (url) => (url.startsWith(FREEDICT) ? new Promise(() => {}) : fakeHttp({ [WIKI + 'chat']: ok(fixture('wiktionary-chat.json')) })(url));
+  const first = await dictionary.lookup('chat', { language: 'en', related: false }, stalled);
+  assert.equal(first.source, 'wiktionary');
+
+  // Paused: straight to Wiktionary.
+  dictionary.clear();
+  const http = fakeHttp({ [FREEDICT]: ok(fixture('freedict-serene.json')), [WIKI + 'chat']: ok(fixture('wiktionary-chat.json')) });
+  await dictionary.lookup('chat', { language: 'en', related: false }, http);
+  assert.deepEqual(http.calls, [WIKI + 'chat']);
+
+  // Back after the pause; a server error starts another one, a 404 does not.
+  clock = 1000;
+  dictionary.clear();
+  const failing = fakeHttp({ [FREEDICT]: { status: 503, json: null }, [WIKI + 'chat']: ok(fixture('wiktionary-chat.json')) });
+  await dictionary.lookup('chat', { language: 'en', related: false }, failing);
+  assert.equal(failing.calls[0], FREEDICT + 'chat');
+  dictionary.clear();
+  const again = fakeHttp({ [WIKI + 'chat']: ok(fixture('wiktionary-chat.json')) });
+  await dictionary.lookup('chat', { language: 'en', related: false }, again);
+  assert.deepEqual(again.calls, [WIKI + 'chat']);
+
+  clock = 2000;
+  dictionary.clear();
+  const missing = fakeHttp({ [WIKI + 'chat']: ok(fixture('wiktionary-chat.json')) });
+  await dictionary.lookup('chat', { language: 'en', related: false }, missing);
+  await dictionary.lookup('word', { language: 'en', related: false }, fakeHttp({ [WIKI + 'word']: ok(fixture('wiktionary-chat.json')) }));
+  dictionary.clear();
+  const back = fakeHttp({ [FREEDICT]: ok(fixture('freedict-serene.json')) });
+  await dictionary.lookup('serene', { language: 'en', related: false }, back);
+  assert.deepEqual(back.calls, [FREEDICT + 'serene']);
 });

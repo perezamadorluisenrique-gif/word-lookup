@@ -86,3 +86,32 @@ test('relatedWords joins the meanings and the entry without repeats or the headw
   entry.synonyms = ['Calm', 'serene', 'quiet'];
   assert.deepEqual(relatedWords(entry, 'synonyms'), ['calm', 'placid', 'fair', 'quiet']);
 });
+
+test('Wiktionary: nested sub-senses are not repeated, Translingual rows are not English, Norwegian is found', () => {
+  const json = {
+    en: [
+      { partOfSpeech: 'Symbol', language: 'Translingual', definitions: [{ definition: 'ISO 639-3 language code for Kirundi.' }] },
+      {
+        partOfSpeech: 'Verb',
+        language: 'English',
+        definitions: [
+          { definition: 'To move <a href="/wiki/swiftly">swiftly</a>.\n<ol><li>To move forward quickly upon two feet.</li></ol>' },
+          { definition: 'To move forward quickly upon two feet.' },
+        ],
+      },
+    ],
+    other: [
+      { partOfSpeech: 'Noun', language: 'Norwegian Bokmål', definitions: [{ definition: 'a house' }] },
+      { partOfSpeech: 'Noun', language: 'Old English', definitions: [{ definition: 'house' }] },
+    ],
+  };
+  const en = parseWiktionary(json, 'run', 'en');
+  assert.deepEqual(
+    en.entry?.meanings.map((m) => [m.partOfSpeech, m.definitions.map((d) => d.text)]),
+    [['verb', ['To move swiftly.', 'To move forward quickly upon two feet.']]],
+  );
+  assert.deepEqual(parseWiktionary(json, 'hus', 'no').entry?.meanings[0].definitions[0].text, 'a house');
+  const fr = parseWiktionary(json, 'hus', 'fr');
+  assert.equal(fr.entry, null);
+  assert.deepEqual(fr.elsewhere, ['English', 'Norwegian Bokmål', 'Old English']);
+});
