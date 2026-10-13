@@ -1,0 +1,13 @@
+{
+  "es": [
+    {
+      "partOfSpeech": "Noun",
+      "language": "Spanish",
+      "definitions": [
+        { "definition": "<a rel=\"mw:WikiLink\" href=\"/wiki/house\" title=\"house\">house</a>, <a rel=\"mw:WikiLink\" href=\"/wiki/home\" title=\"home\">home</a>", "parsedExamples": [{ "example": "Vivo en una <b>casa</b> grande.", "translation": "I live in a big house." }] }
+      ]
+    },
+    { "partOfSpeech": "Verb", "language": "Spanish", "definitions": [{ "definition": "<span class=\"form-of-definition\">first-person singular present indicative of <a href=\"/wiki/casar\">casar</a></span>" }] }
+  ],
+  "it": [{ "partOfSpeech": "Noun", "language": "Italian", "definitions": [{ "definition": "house" }] }]
+}

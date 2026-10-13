@@ -1,0 +1,107 @@
+/* Word Lookup: the dictionary sidebar. */
+.word-lookup-view {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4-2);
+  padding: var(--size-4-3);
+  overflow-y: auto;
+}
+
+.word-lookup-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--size-2-1);
+}
+
+.word-lookup-nav:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.word-lookup-input {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.word-lookup-language {
+  align-self: flex-start;
+}
+
+.word-lookup-head {
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-2);
+}
+
+.word-lookup-word {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.word-lookup-phonetic {
+  color: var(--text-muted);
+}
+
+.word-lookup-status {
+  color: var(--text-muted);
+}
+
+.word-lookup-error {
+  color: var(--text-error);
+}
+
+.word-lookup-part {
+  margin-bottom: var(--size-2-1);
+  color: var(--text-accent);
+  font-size: var(--font-ui-small);
+  font-style: italic;
+}
+
+.word-lookup-meaning,
+.word-lookup-related {
+  margin-top: var(--size-4-2);
+}
+
+.word-lookup-definitions {
+  margin: 0;
+  padding-left: var(--size-4-5);
+}
+
+.word-lookup-definitions li {
+  margin-bottom: var(--size-2-2);
+}
+
+.word-lookup-example {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.word-lookup-more {
+  margin-top: var(--size-2-1);
+}
+
+.word-lookup-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--size-2-2);
+}
+
+.word-lookup-chip {
+  height: auto;
+  padding: var(--size-2-1) var(--size-4-2);
+  border-radius: var(--radius-l);
+  font-size: var(--font-ui-small);
+}
+
+.word-lookup-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--size-4-2);
+  margin-top: var(--size-4-3);
+}
+
+.word-lookup-source {
+  color: var(--text-faint);
+  font-size: var(--font-ui-smaller);
+}

@@ -1,0 +1,49 @@
+[
+  {
+    "word": "serene",
+    "phonetic": "/sɪˈɹiːn/",
+    "phonetics": [
+      { "text": "/sɪˈɹiːn/", "audio": "" },
+      {
+        "text": "/səˈɹin/",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/serene-us.mp3",
+        "sourceUrl": "https://commons.wikimedia.org/w/index.php?curid=1234",
+        "license": { "name": "BY-SA 4.0", "url": "https://creativecommons.org/licenses/by-sa/4.0" }
+      }
+    ],
+    "meanings": [
+      {
+        "partOfSpeech": "adjective",
+        "definitions": [
+          { "definition": "Calm, peaceful and untroubled; tranquil.", "synonyms": [], "antonyms": [], "example": "a serene smile" },
+          { "definition": "Clear, fair and fine; said of the sky or the weather.", "synonyms": ["fair"], "antonyms": [] }
+        ],
+        "synonyms": ["calm", "placid"],
+        "antonyms": ["agitated"]
+      },
+      {
+        "partOfSpeech": "noun",
+        "definitions": [{ "definition": "A clear, calm sky or stretch of water.", "synonyms": [], "antonyms": [] }],
+        "synonyms": [],
+        "antonyms": []
+      }
+    ],
+    "license": { "name": "CC BY-SA 3.0", "url": "https://creativecommons.org/licenses/by-sa/3.0" },
+    "sourceUrls": ["https://en.wiktionary.org/wiki/serene"]
+  },
+  {
+    "word": "serene",
+    "phonetic": "/sɪˈɹiːn/",
+    "phonetics": [],
+    "meanings": [
+      {
+        "partOfSpeech": "adjective",
+        "definitions": [{ "definition": "A title of respect, as in Serene Highness.", "synonyms": [], "antonyms": [] }],
+        "synonyms": [],
+        "antonyms": []
+      }
+    ],
+    "license": { "name": "CC BY-SA 3.0", "url": "https://creativecommons.org/licenses/by-sa/3.0" },
+    "sourceUrls": ["https://en.wiktionary.org/wiki/serene"]
+  }
+]
