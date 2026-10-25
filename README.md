@@ -4,7 +4,7 @@ Look up any word in a sidebar dictionary: definitions, phonetics with audio, exa
 
 Word Lookup is a successor to [Dictionary](https://github.com/phibr0/obsidian-dictionary), which has not been updated since 2022.
 
-![Word Lookup sidebar showing definitions, synonyms and antonyms](docs/screenshot.png)
+![Word Lookup sidebar showing definitions, synonyms and antonyms](https://raw.githubusercontent.com/perezamadorluisenrique-gif/word-lookup/main/docs/screenshot.png)
 
 ## What it does
 
