@@ -4,6 +4,8 @@ Look up any word in a sidebar dictionary: definitions, phonetics with audio, exa
 
 Word Lookup is a successor to [Dictionary](https://github.com/phibr0/obsidian-dictionary), which has not been updated since 2022.
 
+![Word Lookup sidebar showing definitions, synonyms and antonyms](docs/screenshot.png)
+
 ## What it does
 
 - **Look up the selected word** (or the word at the cursor, or the text selected in Reading view) opens the **Dictionary** in the right sidebar. The right-click menu has the same entry: **Look up "word"**.
