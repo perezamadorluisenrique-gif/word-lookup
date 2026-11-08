@@ -10,6 +10,7 @@ import type { HttpGet, LookupOptions } from './src/lookup.ts';
 import { cleanQuery, matchCase, trimSpan, wordAt } from './src/query.ts';
 import { defaultNote, noteFileName, renderTemplate } from './src/template.ts';
 import type { DateFormatter } from './src/template.ts';
+import { moreDefinitions, renderMore } from './src/more-link.ts';
 
 /** The part of moment this plugin uses, typed here: the directory's review has no types for `moment`. */
 interface Moment {
@@ -587,6 +588,7 @@ class WordLookupSettingTab extends PluginSettingTab {
           { ...TEXT.openAfterCreate, control: { type: 'toggle', key: 'openAfterCreate', defaultValue: true } },
         ],
       },
+      ...(moreDefinitions() as SettingDefinitionItem[]),
     ];
   }
 
@@ -614,6 +616,7 @@ class WordLookupSettingTab extends PluginSettingTab {
     this.text('folder', TEXT.folder);
     this.text('templateFile', TEXT.templateFile);
     this.toggle('openAfterCreate', TEXT.openAfterCreate);
+    renderMore(this.containerEl, (el) => new Setting(el));
   }
 
   private text(key: Key, text: { name: string; desc: string }) {
